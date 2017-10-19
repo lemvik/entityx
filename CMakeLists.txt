@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.8)
 set(ENTITYX_MAJOR_VERSION 1)
 set(ENTITYX_MINOR_VERSION 1)
 set(ENTITYX_PATCH_VERSION 2)
@@ -29,20 +29,22 @@ include(CheckCXXSourceCompiles)
 
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -DENTITYX_DLLIMPORT")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-g -Os -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
+elseif(MSVC)
+    message (STATUS "Using MSVC")
     # /Zi - Produces a program database (PDB) that contains type information and symbolic debugging information for use with the debugger.
     # /FS - Allows multiple cl.exe processes to write to the same .pdb file
     # /DEBUG - Enable debug during linking
     # /Od - Disables optimization
-    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /FS /DEBUG /Od /MDd")
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /FS /DEBUG /Od /MDd /DENTITYX_DLLIMPORT=")
     # /Ox - Full optimization
-    set(CMAKE_CXX_FLAGS_RELEASE "/Ox -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "/Ox -DNDEBUG /DENTITYX_DLLIMPORT=")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Ox /Zi /FS /DEBUG")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
 # if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

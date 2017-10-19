@@ -252,7 +252,7 @@ struct BaseComponent {
 #endif
   }
 
-  static Family family_counter_;
+  ENTITYX_DLLIMPORT static Family family_counter_;
 };
 
 

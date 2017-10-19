@@ -57,7 +57,7 @@ class BaseSystem : entityx::help::NonCopyable {
    */
   virtual void update(EntityManager &entities, EventManager &events, TimeDelta dt) = 0;
 
-  static Family family_counter_;
+  ENTITYX_DLLIMPORT static Family family_counter_;
 
  protected:
 };

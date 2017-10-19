@@ -33,7 +33,7 @@ class BaseEvent {
   virtual ~BaseEvent();
 
  protected:
-  static Family family_counter_;
+  ENTITYX_DLLIMPORT static Family family_counter_;
 };
 
 
