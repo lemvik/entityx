@@ -27,7 +27,7 @@
 #include <utility>
 #include <vector>
 #include <type_traits>
- #include <functional>
+#include <functional>
 
 #include "entityx/help/Pool.h"
 #include "entityx/config.h"
@@ -82,7 +82,7 @@ public:
   /**
    * Id of an invalid Entity.
    */
-  static const Id INVALID;
+  ENTITYX_DLLIMPORT static const Id INVALID;
 
   Entity() = default;
   Entity(EntityManager *manager, Entity::Id id) : manager_(manager), id_(id) {}

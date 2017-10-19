@@ -99,6 +99,9 @@ macro(create_test TARGET_NAME SOURCE DEPENDENCIES)
         ${DEPENDENCIES}
         ${ARGN}
         )
+    if(MSVC)
+	    target_compile_definitions(${TARGET_NAME} PRIVATE "ENTITYX_DLLIMPORT=__declspec(dllimport)")
+    endif(MSVC)
 
     # Special case for benchmark tests
     if (${TARGET_NAME} MATCHES .*benchmark.*)
