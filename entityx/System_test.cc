@@ -42,7 +42,7 @@ class MovementSystem : public System<MovementSystem> {
  public:
   explicit MovementSystem(string label = "") : label(label) {}
 
-  void update(EntityManager &es, EventManager &events, TimeDelta) override {
+  void update(EntityManager &es, EventManager &, TimeDelta) override {
     auto entities = es.entities_with_components<Position, Direction>();
     ComponentHandle<Position> position;
     ComponentHandle<Direction> direction;
@@ -58,7 +58,7 @@ class MovementSystem : public System<MovementSystem> {
 
 class CounterSystem : public System<CounterSystem> {
 public:
-  void update(EntityManager &es, EventManager &events, TimeDelta) override {
+  void update(EntityManager &es, EventManager &, TimeDelta) override {
     auto entities = es.entities_with_components<Counter>();
     Counter::Handle counter;
     for (auto entity : entities) {
@@ -95,7 +95,7 @@ TEST_CASE_METHOD(EntitiesFixture, "TestApplySystem") {
   systems.add<MovementSystem>();
   systems.configure();
 
-  systems.update<MovementSystem>(0.0);
+  systems.update<MovementSystem>(entityx::TimeDelta{0});
   ComponentHandle<Position> position;
   ComponentHandle<Direction> direction;
   for (auto entity : created_entities) {
@@ -115,7 +115,7 @@ TEST_CASE_METHOD(EntitiesFixture, "TestApplyAllSystems") {
   systems.add<CounterSystem>();
   systems.configure();
 
-  systems.update_all(0.0);
+  systems.update_all(entityx::TimeDelta{0});
   Position::Handle position;
   Direction::Handle direction;
   Counter::Handle counter;

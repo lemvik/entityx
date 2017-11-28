@@ -30,8 +30,8 @@ private:
 };
 
 struct Listener : public Receiver<Listener> {
-  void receive(const EntityCreatedEvent &event) { ++created; }
-  void receive(const EntityDestroyedEvent &event) { ++destroyed; }
+  void receive(const EntityCreatedEvent &) { ++created; }
+  void receive(const EntityDestroyedEvent &) { ++destroyed; }
 
   int created = 0;
   int destroyed = 0;

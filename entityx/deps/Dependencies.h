@@ -35,7 +35,7 @@ public:
     events.subscribe<ComponentAddedEvent<C>>(*this);
   }
 
-  void update(EntityManager &entities, EventManager &events, TimeDelta dt) override {}
+  void update(EntityManager&, EventManager&, TimeDelta) override {}
 
 private:
   template <typename D>

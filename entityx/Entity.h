@@ -239,8 +239,8 @@ struct BaseComponent {
 
   // NOTE: Component memory is *always* managed by the EntityManager.
   // Use Entity::destroy() instead.
-  void operator delete(void *p) { fail(); }
-  void operator delete[](void *p) { fail(); }
+  void operator delete(void*) { fail(); }
+  void operator delete[](void*) { fail(); }
 
 
  protected:
@@ -437,7 +437,7 @@ class EntityManager : entityx::help::NonCopyable {
         ViewIterator<Iterator, All>::next();
       }
 
-      void next_entity(Entity &entity) {}
+      void next_entity(Entity&) {}
     };
 
     Iterator begin() { return Iterator(manager_, mask_, 0); }
@@ -601,7 +601,7 @@ class EntityManager : entityx::help::NonCopyable {
    * Emits EntityDestroyedEvent.
    */
   void destroy(Entity::Id entity) {
-    assert_valid(entity);
+    assert(valid(entity));
     uint32_t index = entity.index();
     auto mask = entity_component_mask_[index];
     for (size_t i = 0; i < component_helpers_.size(); i++) {
@@ -616,7 +616,7 @@ class EntityManager : entityx::help::NonCopyable {
   }
 
   Entity get(Entity::Id id) {
-    assert_valid(id);
+    assert(valid(id));
     return Entity(this, id);
   }
 
@@ -639,7 +639,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename C, typename ... Args>
   ComponentHandle<C> assign(Entity::Id id, Args && ... args) {
-    assert_valid(id);
+    assert(valid(id));
     const BaseComponent::Family family = component_family<C>();
     assert(!entity_component_mask_[id.index()].test(family));
 
@@ -663,7 +663,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename C>
   void remove(Entity::Id id) {
-    assert_valid(id);
+    assert(valid(id));
     const BaseComponent::Family family = component_family<C>();
     const uint32_t index = id.index();
 
@@ -684,7 +684,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename C>
   bool has_component(Entity::Id id) const {
-    assert_valid(id);
+    assert(valid(id));
     size_t family = component_family<C>();
     // We don't bother checking the component mask, as we return a nullptr anyway.
     if (family >= component_pools_.size())
@@ -702,7 +702,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
   ComponentHandle<C> component(Entity::Id id) {
-    assert_valid(id);
+    assert(valid(id));
     size_t family = component_family<C>();
     // We don't bother checking the component mask, as we return a nullptr anyway.
     if (family >= component_pools_.size())
@@ -720,7 +720,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
   const ComponentHandle<C, const EntityManager> component(Entity::Id id) const {
-    assert_valid(id);
+    assert(valid(id));
     size_t family = component_family<C>();
     // We don't bother checking the component mask, as we return a nullptr anyway.
     if (family >= component_pools_.size())
@@ -799,7 +799,7 @@ class EntityManager : entityx::help::NonCopyable {
 
   template <typename C>
   void unpack(Entity::Id id, ComponentHandle<C> &a) {
-    assert_valid(id);
+    assert(valid(id));
     a = component<C>(id);
   }
 
@@ -816,7 +816,7 @@ class EntityManager : entityx::help::NonCopyable {
    */
   template <typename A, typename ... Args>
   void unpack(Entity::Id id, ComponentHandle<A> &a, ComponentHandle<Args> & ... args) {
-    assert_valid(id);
+    assert(valid(id));
     a = component<A>(id);
     unpack<Args ...>(id, args ...);
   }
@@ -837,12 +837,6 @@ class EntityManager : entityx::help::NonCopyable {
   template <typename C, typename EM>
   friend class ComponentHandle;
 
-
-  inline void assert_valid(Entity::Id id) const {
-    assert(id.index() < entity_component_mask_.size() && "Entity::Id ID outside entity vector range");
-    assert(entity_version_[id.index()] == id.version() && "Attempt to access Entity via a stale Entity::Id");
-  }
-
   template <typename C>
   C *get_component_ptr(Entity::Id id) {
     assert(valid(id));
@@ -853,14 +847,14 @@ class EntityManager : entityx::help::NonCopyable {
 
   template <typename C>
   const C *get_component_ptr(Entity::Id id) const {
-    assert_valid(id);
+    assert(valid(id));
     BasePool *pool = component_pools_[component_family<C>()];
     assert(pool);
     return static_cast<const C*>(pool->get(id.index()));
   }
 
   ComponentMask component_mask(Entity::Id id) {
-    assert_valid(id);
+    assert(valid(id));
     return entity_component_mask_.at(id.index());
   }
 

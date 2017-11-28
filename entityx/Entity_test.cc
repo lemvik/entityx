@@ -407,7 +407,7 @@ TEST_CASE_METHOD(EntityManagerFixture, "TestComponentRemovedEvent") {
 
 TEST_CASE_METHOD(EntityManagerFixture, "TestComponentRemovedEventOnEntityDestroyed") {
   struct ComponentRemovedReceiver : public Receiver<ComponentRemovedReceiver> {
-    void receive(const ComponentRemovedEvent<Direction> &event) {
+    void receive(const ComponentRemovedEvent<Direction> &) {
       removed = true;
     }
 
@@ -649,7 +649,7 @@ TEST_CASE_METHOD(EntityManagerFixture, "TestEntityManagerEach") {
   Entity a = em.create();
   a.assign<Position>(1, 2);
   int count = 0;
-  em.each<Position>([&count](Entity entity, Position &position) {
+  em.each<Position>([&count](Entity, Position &position) {
     count++;
     REQUIRE(position.x == 1);
     REQUIRE(position.y == 2);
@@ -661,7 +661,7 @@ TEST_CASE_METHOD(EntityManagerFixture, "TestViewEach") {
   Entity a = em.create();
   a.assign<Position>(1, 2);
   int count = 0;
-  em.entities_with_components<Position>().each([&count](Entity entity, Position &position) {
+  em.entities_with_components<Position>().each([&count](Entity, Position &position) {
     count++;
     REQUIRE(position.x == 1);
     REQUIRE(position.y == 2);
